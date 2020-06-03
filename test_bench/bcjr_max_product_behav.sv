@@ -75,7 +75,7 @@ function llr_t BCJR_MaxProduct(llr_t LLRVector);
     for (j = 0; j < numSymbols + 1; j++)
       AlphaMetric[i][j] = -10000000.0; //double.MaxValue;
 
-  AlphaMetric[0][0] = 100000.0;
+  AlphaMetric[0][0] = 0; // Change to match hardware 100000.0;
 
   for (i = 0; i < numSymbols; i += 1)
     begin
@@ -124,7 +124,7 @@ function llr_t BCJR_MaxProduct(llr_t LLRVector);
   BetaMetric = '{ default : -10000000.0 };
   for (j = 0; j < trellis.STATES; j++) 
     oldBetaMetric[j] = -10000000.0; //double.MaxValue;
-  oldBetaMetric[0] = 100000.0; /* Termination */
+  oldBetaMetric[0] = 0; // Change to match hardware 100000.0; /* Termination */
   for (i = numSymbols; i > 0; i -= 1)
     begin
       int tmp, q, b;

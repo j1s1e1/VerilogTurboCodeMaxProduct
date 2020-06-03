@@ -23,17 +23,23 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-interface interleaver_prime_if2#(BITS = 8, int N = 10, P = 3);
-  typedef logic [BITS-1:0] packet_t[N];
+interface interleaver_prime_if2#(BITS = 8, int N = 10, P = 3, TAIL_BITS = 0);
+  typedef logic [BITS-1:0] packet_t[N + TAIL_BITS];
   
   function packet_t Forward(packet_t data);
-    for (int i = 0; i < N; i++)
-      Forward[i] = data[(P * i) % N];
+    for (int i = 0; i < N + TAIL_BITS; i++)
+      if (i >= N)
+        Forward[i] = data[i];
+      else
+        Forward[i] = data[(P * i) % N];
   endfunction
   
   function packet_t Reverse(packet_t data);
-    for (int i = 0; i < N; i++)
-      Reverse[(P * i) % N] = data[i];
+    for (int i = 0; i < N + TAIL_BITS; i++)
+      if (i >= N)
+         Reverse[i] = data[i];
+      else
+        Reverse[(P * i) % N] = data[i];
   endfunction
   
 endinterface

@@ -24,16 +24,15 @@ import channel_tasks_pkg::*;
 module turbo_decode_tb();
 
 parameter BITS = 32, PRECISION = "SINGLE";
-parameter N = 64, NOUT = 2, TAIL_BITS = 2, HALF_ITER = 4;
+parameter N = 29, NOUT = 2, TAIL_BITS = 2, HALF_ITER = 2;
 parameter STATES = 4, NIN = 1, RECURSIVE = 7;
 parameter int POLY[NOUT] = '{ 5, 7 };
 parameter BITS_PER_SYMBOL = NOUT, SYMBOLS = N + TAIL_BITS;
-parameter type DATA_TYPE = logic [31:0];
 
 parameter P = 3;
 
 logic clk;
-interleaver_prime_if #(.DATA_TYPE(DATA_TYPE), .N(N), .P(P)) interleave();
+interleaver_prime_if #(.BITS(BITS), .N(N), .P(P), .TAIL_BITS(TAIL_BITS)) interleave();
 bcjr_max_product_if #(.BITS_PER_SYMBOL(BITS_PER_SYMBOL), .SYMBOLS(SYMBOLS),
     .STATES(STATES), .NIN(NIN), .NOUT(NOUT), .RECURSIVE(RECURSIVE), .POLY(POLY)) siso();
 trellis_if #(.STATES(STATES), .NIN(NIN), .NOUT(NOUT), 
@@ -61,7 +60,8 @@ function x_t SetX3s();
   return result;
 endfunction
 
-interleaver_prime_if #(.DATA_TYPE(logic [0:0]), .N(N), .P(P)) interleave_encode();
+interleaver_prime_if #(.BITS(1), .N(N), .P(P)) interleave_encode();
+interleaver_prime_if #(.BITS(1), .N(N), .P(P)) interleave_result();
 logic in_valid_encode;
 logic x_encode[N];
 logic out_valid_encode;
@@ -159,7 +159,7 @@ turbo_decode1
 (
 .clk,
 .interleave,
-.interleave_result(interleave_encode),
+.interleave_result,
 .trellis,
 .in_valid,
 .y,

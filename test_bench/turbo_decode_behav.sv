@@ -133,8 +133,8 @@ function llr_t Flip(llr_t data);
 endfunction
 
 function block_t Forward(block_t data);
-  logic [31:0] inData[N];
-  logic [31:0] outData[N];
+  logic [31:0] inData[N+TAIL_BITS];
+  logic [31:0] outData[N+TAIL_BITS];
   for (int i = 0; i < N; i++)
     inData[i] = $shortrealtobits(data[i]);
   outData = interleave.Forward(inData);
@@ -143,8 +143,8 @@ function block_t Forward(block_t data);
 endfunction
 
 function block_t Reverse(block_t data);
-  logic [31:0] inData[N];
-  logic [31:0] outData[N];
+  logic [31:0] inData[N+TAIL_BITS];
+  logic [31:0] outData[N+TAIL_BITS];
   for (int i = 0; i < N; i++)
     inData[i] = $shortrealtobits(data[i]);
   outData = interleave.Reverse(inData);

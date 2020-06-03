@@ -41,6 +41,7 @@ output logic result[N]
 
 localparam MAX_PRODUCT_DELAY = SYMBOLS * (STATES + 2) + $clog2(STATES);
 localparam DELAY = 2 * SYMBOLS + 3 + MAX_PRODUCT_DELAY;
+localparam EXTRINSIC_DELAY = 0;
 
 typedef logic [BITS-1:0] llr_t[BITS_PER_SYMBOL][SYMBOLS];
 typedef logic [BITS-1:0] block_t[N];
@@ -86,11 +87,9 @@ assign result = (out_valid) ?
 for (genvar g = 0; g < BITS_PER_SYMBOL; g++)
   begin
     if (HALF_ITER == 0)
-      assign extrinsic_out_p[g][0:N-1] = interleave.Forward(extrinsic_result_minus_input[g][0:N-1]);
+      assign extrinsic_out_p[g] = interleave.Forward(extrinsic_result_minus_input[g]);
     else
-      assign extrinsic_out_p[g][0:N-1] = interleave.Reverse(extrinsic_result_minus_input[g][0:N-1]);
-    if (SYMBOLS > N)
-      assign extrinsic_out_p[g][N:SYMBOLS-1] = extrinsic_result_minus_input[g][N:SYMBOLS-1];
+      assign extrinsic_out_p[g] = interleave.Reverse(extrinsic_result_minus_input[g]);
   end                   
 
 always @(posedge clk)
@@ -133,7 +132,7 @@ delay_v_llr_vector
 
 if (ALOGORITHM == "MPA")
 bcjr_max_product
-#(.BITS(BITS), .PRECISION(PRECISION), .BITS_PER_SYMBOL(BITS_PER_SYMBOL), .SYMBOLS(SYMBOLS))
+#(.BITS(BITS), .PRECISION(PRECISION), .BITS_PER_SYMBOL(BITS_PER_SYMBOL), .STATES(STATES), .SYMBOLS(SYMBOLS))
 bcjr_max_product1
 (
 .clk,
@@ -205,7 +204,7 @@ delay_m_encoded_plus_extrinsic_scalde
 .c(encoded_data_plus_extrinsic_scaled_d)
 ); 
 
-delay_m #(.DELAY(DELAY-3), .WIDTH(BITS), .R(BITS_PER_SYMBOL), .C(SYMBOLS))
+delay_m #(.DELAY(EXTRINSIC_DELAY), .WIDTH(BITS), .R(BITS_PER_SYMBOL), .C(SYMBOLS))
 delay_m_extrinsic
 (
 .clk(clk),

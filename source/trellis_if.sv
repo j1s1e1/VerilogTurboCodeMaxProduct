@@ -164,7 +164,7 @@ endfunction
 function logic [NOUT-1:0] SingleBranchMetricSelection(logic [STATE_BITS-1:0] state, logic input_bit);
   SingleBranchMetricSelection = 0;
   for (int i = 0; i < NOUT; i++)
-    SingleBranchMetricSelection |= ^({state,input_bit} & POLY[i]) << i;
+    SingleBranchMetricSelection = SingleOutputs(state, input_bit); // |= ^({state,input_bit} & POLY[i]) << i;
 endfunction
 
 function branch_metric_selection_t CalcBranchMetricSelections();
